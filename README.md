@@ -1,8 +1,9 @@
 # Local Development Instructions
-Prerquisites:
--Download Docker ---> (https://docs.docker.com/get-docker/)
--Download Git    ---> (https://github.com/git-guides/install-git
--Clone this repo ---> (https://github.com/bjornburrell-qcbb/Docker-Book-Review.git) 
+Prerequisites:
+
+*Download Docker ---> (https://docs.docker.com/get-docker/)
+*Download Git    ---> (https://github.com/git-guides/install-git
+*Clone this repo ---> (https://github.com/bjornburrell-qcbb/Docker-Book-Review.git) 
 
 git clone https://github.com/bjornburrell-qcbb/Docker-Book-Review.git
 
