@@ -7,6 +7,10 @@ Prerequisites:
   <li>Clone this repo ---> (https://github.com/bjornburrell-qcbb/Docker-Book-Review.git) </li>
 </ul>
 
+
+Instructions:
+
+<code>
 git clone https://github.com/bjornburrell-qcbb/Docker-Book-Review.git
 
 Run `npm i` inside the client directory
@@ -21,3 +25,4 @@ Access the Adminer(database gui) at `http://localhost:8000/`
 Adminer creds: server = `mysql_db`  Username = `root`  password = `MYSQL_ROOT_PASSWORD`
 
 Access the application at `http://localhost:3050/` 
+</code>

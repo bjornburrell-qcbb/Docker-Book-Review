@@ -79,7 +79,7 @@ class App extends Component {
 
     return (
       <div className='App'>
-        <h1>Dockerized Fullstack React Application</h1>
+        <h1>Dockerized Book Review Application</h1>
         <div className='form'>
           <input name='setBookName' placeholder='Enter Book Name' onChange={this.handleChange} />
           <input name='setReview' placeholder='Enter Review' onChange={this.handleChange} />
