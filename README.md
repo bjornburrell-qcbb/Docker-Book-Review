@@ -5,6 +5,7 @@ Prerequisites:
   <li>Download Docker ---> (https://docs.docker.com/get-docker/)</li>
   <li>Download Git    ---> (https://github.com/git-guides/install-git</li>
   <li>Clone this repo ---> (https://github.com/bjornburrell-qcbb/Docker-Book-Review.git) </li>
+    <li>Download npm ---> (Google install npm, if on mac use homebrew) </li>
 </ul>
 
 
