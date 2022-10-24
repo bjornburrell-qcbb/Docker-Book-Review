@@ -2,7 +2,13 @@
 FROM node:16
 WORKDIR /usr/src/app
 COPY package.json ./
-COPY package-lock.json ./
-COPY ./ ./
-RUN npm i
-CMD ["npm", "run", "start"]
+COPY yarn.lock ./
+RUN yarn install
+
+COPY next.config.js ./next.config.js
+
+COPY pages ./pages
+COPY public ./public
+COPY styles ./styles
+
+CMD ["yarn", "dev"]
