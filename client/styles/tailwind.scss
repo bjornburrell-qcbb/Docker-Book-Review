@@ -1,0 +1,45 @@
+@import '~tailwindcss/base';
+@import '~tailwindcss/components';
+@import '~tailwindcss/utilities';
+
+// @import 'table';
+// @import 'tabs';
+
+/* Import fonts in CSS like this, add them to custom theme in tailwind.config.js */
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/Lato/Lato-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 700;
+  src: url('../assets/fonts/Lato/Lato-Bold.ttf') format(truetype);
+}
+
+@font-face {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: 300;
+  src: url('../assets/fonts/Lato/Lato-Light.ttf') format('truetype');
+}
+
+body {
+  color: theme('colors.secondary.ink');
+}
+
+/* Override annoying antd properties with specificity */
+
+/* Ant design icons don't sit properly with tailwind's override */
+svg {
+  vertical-align: unset;
+}
+
+.text-antd-primary-500 {
+  &.anticon {
+    @apply text-primary-500;
+  }
+}
