@@ -1,0 +1,58 @@
+.myClass {
+  color: red !important; /* Demo for applying style at top level  */
+
+  & * {
+    overflow: visible !important;
+  }
+
+  & span {
+    /*  styles if needed for svg icons in menu */
+  }
+}
+.menu {
+  --menu-hover-color: theme("colors.primary.600");
+  --sidebar-svg-box-size: 13px;
+
+  border-right: 0;
+  background-color: theme("colors.primary.800");
+  color: theme("colors.grayscale.extra-light-gray");
+
+  * {
+    overflow: visible !important;
+  }
+
+  span svg {
+    --sidebar-svg-box-size: 13px;
+
+    width: var(--sidebar-svg-box-size);
+    height: var(--sidebar-svg-box-size);
+    fill: currentcolor;
+  }
+
+  [role="menuitem"] > i {
+    color: theme("colors.grayscale.extra-light-gray") !important;
+  }
+
+  [role="menuitem"]:hover > i {
+    color: theme("colors.grayscale.white") !important;
+  }
+
+  /* Submenu links */
+  li[role="menuitem"] a {
+    color: theme("colors.grayscale.extra-light-gray") !important;
+  }
+
+  /* Top-level links */
+  div[role="menuitem"]:hover a {
+    color: theme("colors.grayscale.white") !important;
+  }
+
+  /* Submenu links */
+  li[role="menuitem"]:hover a {
+    color: theme("colors.grayscale.white") !important;
+  }
+
+  [role="menuitem"]:hover > [role="img"] {
+    color: theme("colors.grayscale.white") !important;
+  }
+}

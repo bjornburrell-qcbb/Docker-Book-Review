@@ -1,0 +1,18 @@
+.contentParent {
+    display: flex;
+    width: calc(100% - 256px);
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .mainContent {
+    height: 100%;
+    border-top: 1px solid #d1d1d1;
+    border-right: 1px solid #d1d1d1;
+    border-left: 1px solid #d1d1d1;
+    margin-top: 3rem;
+    margin-right: 3rem;
+    margin-left: 3rem;
+    box-shadow: 0 0 5px 2px rgb(0 0 0 / 10%);
+  }
+  
