@@ -19,26 +19,39 @@ const axiosClient = axios.create({
     setISBNInput(input);
   };
 
-  const getBook = async (isbnInput) => {
+  const getBook = async (isbnInput: any) => {
     const res = await fetch(
       "https://openlibrary.org/isbn/" + `${isbnInput}` + ".json"
     );
     const answer = await res.json();
+    setBook(answer)
     // console.log(answer)
     return answer
   };
 
-//   const bookInfo = useMemo(() => getBook(isbnInput), [isbnInput])
-//   console.log(bookInfo);
+  const bookInfo = useMemo(() => getBook(isbnInput), [isbnInput]);
+  console.log(bookInfo);
   
-useEffect(() => {
-    axiosClient.get('/' + `${isbnInput}.json`).then((response) => {
-        setBook(response.data);
-    })
-})
+// useEffect(() => {
+//     axiosClient.get('/' + `${isbnInput}.json`).then((response) => {
+//         setBook(response.data);
+//     })
+// })
+
+  // const PublisherDetails = () => {
+   
+  //   return(
+  //     <div>
+  //     <p>{"Publisher(s): "}</p>
+  //     {book?.publishers.map((publisher) => {<p>
+  //       {publisher}
+  //     </p>})}
+  //   </div>
+  //   )
+  // }
 
   return (
-    <div className="flex flex-col p-8 gap-2">
+    <div className="flex flex-col p-8 gap-8">
       <div className="font-semibold">Enter ISBN Number:</div>
       <div className="flex flex-row">
         <Input.Group compact>
@@ -57,6 +70,11 @@ useEffect(() => {
       </div>
       <div>
         <p>Title: {book?.title}</p>
+        <p>Author: {book?.by_statement}</p>
+        {/* <p>Description: {book?.description}</p> */}
+      <p>{"Publisher(s): "}{book?.publishers}</p>
+      <p>Number of Pages: {book?.number_of_pages}</p>
+      <p>Publication Date: {book?.publish_date}</p>
       </div>
     </div>
     
