@@ -146,4 +146,17 @@ export const lists: Lists = {
       posts: relationship({ ref: 'Post.tags', many: true }),
     },
   }),
+  Book: list({
+    access: allowAll,
+    fields: {
+      title: text({validation: {isRequired: true}}),
+      isbn: text({validation: {isRequired: true}}),
+      description: text(),
+      quantity: text({validation: {isRequired: true}}),
+      language: text({validation: {isRequired: true}}),
+      publisher: text(),
+      pageNumbers: text(),
+      publicationDate: timestamp({ defaultValue: {kind: 'now'}})
+    }
+  })
 };

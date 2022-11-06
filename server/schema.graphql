@@ -254,6 +254,76 @@ input TagCreateInput {
   posts: PostRelateToManyForCreateInput
 }
 
+type Book {
+  id: ID!
+  title: String
+  isbn: String
+  description: String
+  quantity: String
+  language: String
+  publisher: String
+  pageNumbers: String
+  publicationDate: DateTime
+}
+
+input BookWhereUniqueInput {
+  id: ID
+}
+
+input BookWhereInput {
+  AND: [BookWhereInput!]
+  OR: [BookWhereInput!]
+  NOT: [BookWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  isbn: StringFilter
+  description: StringFilter
+  quantity: StringFilter
+  language: StringFilter
+  publisher: StringFilter
+  pageNumbers: StringFilter
+  publicationDate: DateTimeNullableFilter
+}
+
+input BookOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  isbn: OrderDirection
+  description: OrderDirection
+  quantity: OrderDirection
+  language: OrderDirection
+  publisher: OrderDirection
+  pageNumbers: OrderDirection
+  publicationDate: OrderDirection
+}
+
+input BookUpdateInput {
+  title: String
+  isbn: String
+  description: String
+  quantity: String
+  language: String
+  publisher: String
+  pageNumbers: String
+  publicationDate: DateTime
+}
+
+input BookUpdateArgs {
+  where: BookWhereUniqueInput!
+  data: BookUpdateInput!
+}
+
+input BookCreateInput {
+  title: String
+  isbn: String
+  description: String
+  quantity: String
+  language: String
+  publisher: String
+  pageNumbers: String
+  publicationDate: DateTime
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -278,6 +348,12 @@ type Mutation {
   updateTags(data: [TagUpdateArgs!]!): [Tag]
   deleteTag(where: TagWhereUniqueInput!): Tag
   deleteTags(where: [TagWhereUniqueInput!]!): [Tag]
+  createBook(data: BookCreateInput!): Book
+  createBooks(data: [BookCreateInput!]!): [Book]
+  updateBook(where: BookWhereUniqueInput!, data: BookUpdateInput!): Book
+  updateBooks(data: [BookUpdateArgs!]!): [Book]
+  deleteBook(where: BookWhereUniqueInput!): Book
+  deleteBooks(where: [BookWhereUniqueInput!]!): [Book]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -310,6 +386,9 @@ type Query {
   tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0): [Tag!]
   tag(where: TagWhereUniqueInput!): Tag
   tagsCount(where: TagWhereInput! = {}): Int
+  books(where: BookWhereInput! = {}, orderBy: [BookOrderByInput!]! = [], take: Int, skip: Int! = 0): [Book!]
+  book(where: BookWhereUniqueInput!): Book
+  booksCount(where: BookWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

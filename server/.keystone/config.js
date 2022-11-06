@@ -96,6 +96,19 @@ var lists = {
       name: (0, import_fields.text)(),
       posts: (0, import_fields.relationship)({ ref: "Post.tags", many: true })
     }
+  }),
+  Book: (0, import_core.list)({
+    access: import_access.allowAll,
+    fields: {
+      title: (0, import_fields.text)({ validation: { isRequired: true } }),
+      isbn: (0, import_fields.text)({ validation: { isRequired: true } }),
+      description: (0, import_fields.text)(),
+      quantity: (0, import_fields.text)({ validation: { isRequired: true } }),
+      language: (0, import_fields.text)({ validation: { isRequired: true } }),
+      publisher: (0, import_fields.text)(),
+      pageNumbers: (0, import_fields.text)(),
+      publicationDate: (0, import_fields.timestamp)({ defaultValue: { kind: "now" } })
+    }
   })
 };
 
