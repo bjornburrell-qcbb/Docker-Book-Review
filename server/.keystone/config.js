@@ -1,4 +1,3 @@
-"use strict";
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -29,7 +28,13 @@ var import_core2 = require("@keystone-6/core");
 var import_core = require("@keystone-6/core");
 var import_access = require("@keystone-6/core/access");
 var import_fields = require("@keystone-6/core/fields");
-var import_fields_document = require("@keystone-6/fields-document");
+var getBook = async (isbnInput) => {
+  const res = await fetch(
+    `https://openlibrary.org/isbn/${isbnInput}.json`
+  );
+  const answer = await res.json();
+  return answer;
+};
 var lists = {
   User: (0, import_core.list)({
     access: import_access.allowAll,
@@ -40,73 +45,40 @@ var lists = {
         isIndexed: "unique"
       }),
       password: (0, import_fields.password)({ validation: { isRequired: true } }),
-      posts: (0, import_fields.relationship)({ ref: "Post.author", many: true }),
       createdAt: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
       })
     }
   }),
-  Post: (0, import_core.list)({
-    access: import_access.allowAll,
-    fields: {
-      title: (0, import_fields.text)({ validation: { isRequired: true } }),
-      content: (0, import_fields_document.document)({
-        formatting: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1]
-        ],
-        links: true,
-        dividers: true
-      }),
-      author: (0, import_fields.relationship)({
-        ref: "User.posts",
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name", "email"],
-          inlineEdit: { fields: ["name", "email"] },
-          linkToItem: true,
-          inlineConnect: true
-        },
-        many: false
-      }),
-      tags: (0, import_fields.relationship)({
-        ref: "Tag.posts",
-        many: true,
-        ui: {
-          displayMode: "cards",
-          cardFields: ["name"],
-          inlineEdit: { fields: ["name"] },
-          linkToItem: true,
-          inlineConnect: true,
-          inlineCreate: { fields: ["name"] }
-        }
-      })
-    }
-  }),
-  Tag: (0, import_core.list)({
-    access: import_access.allowAll,
-    ui: {
-      isHidden: true
-    },
-    fields: {
-      name: (0, import_fields.text)(),
-      posts: (0, import_fields.relationship)({ ref: "Post.tags", many: true })
-    }
-  }),
   Book: (0, import_core.list)({
     access: import_access.allowAll,
     fields: {
-      title: (0, import_fields.text)({ validation: { isRequired: true } }),
-      isbn: (0, import_fields.text)({ validation: { isRequired: true } }),
+      isbn: (0, import_fields.text)({
+        hooks: {
+          resolveInput({ resolvedData, inputData }) {
+            console.log(resolvedData.isbn);
+            return resolvedData.isbn;
+          }
+        }
+      }),
+      title: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book ? book.title : inputData;
+            else if (operation === "update")
+              return resolvedData.title;
+            else
+              return inputData;
+          }
+        }
+      }),
       description: (0, import_fields.text)(),
       quantity: (0, import_fields.text)({ validation: { isRequired: true } }),
       language: (0, import_fields.text)({ validation: { isRequired: true } }),
       publisher: (0, import_fields.text)(),
-      pageNumbers: (0, import_fields.text)(),
+      pageNumbers: (0, import_fields.text)({}),
       publicationDate: (0, import_fields.timestamp)({ defaultValue: { kind: "now" } })
     }
   })
