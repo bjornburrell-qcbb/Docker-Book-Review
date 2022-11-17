@@ -11,17 +11,17 @@ module.exports = {
     colors: {
       // Useful tool for splitting colors https://m2.material.io/design/color/the-color-system.html#tools-for-picking-colors
       primary: {
-        // J&J Red
-        50: '#ffeaef',
-        100: '#fecbd4',
-        200: '#ef979d',
-        300: '#e56d77',
-        400: '#f04957',
-        500: '#f7313e',
-        600: '#e7273d',
-        700: '#d51b36',
-        800: '#c8102f',
-        900: '#b90023',
+        // QCBB Purple
+        50: '#FDF4FF',
+        100: '#FAE8FF',
+        200: '#F5D0FE',
+        300: '#F0ABFC',
+        400: '#E879F9',
+        500: '#D946EF',
+        600: '#C026D3',
+        700: '#7E22CE',
+        800: '#86198F',
+        900: '#581C87',
       },
       secondary: {
         ink: '#091f2c',

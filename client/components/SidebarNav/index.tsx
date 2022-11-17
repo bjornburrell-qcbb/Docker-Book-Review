@@ -19,6 +19,10 @@ const items: MenuProps["items"] = [
 
 export const SidebarNav: FC = () => {
   return (
+    <div>
+    <img src="https://cdn.shopify.com/s/files/1/0598/5524/1423/t/7/assets/queen-city-book-bank-with-piglet-1656429644763_1200x.png?v=1656429642"
+    style={{ width: 256 }}
+    />
     <Menu
       className={styles.myClass}
       style={{ width: 256 }}
@@ -28,5 +32,6 @@ export const SidebarNav: FC = () => {
       selectable={false}
       items={items}
     />
+    </div>
   );
 };
