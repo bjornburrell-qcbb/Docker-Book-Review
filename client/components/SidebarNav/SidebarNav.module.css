@@ -1,5 +1,5 @@
 .myClass {
-  color: rgb(36, 0, 45) !important; 
+  color: rgb(2, 0, 30) !important; 
 
   & * {
     overflow: visible !important;
@@ -10,11 +10,11 @@
   }
 }
 .menu {
-  --menu-hover-color: theme("colors.primary.200");
+  --menu-hover-color: theme("colors.primary.400");
   --sidebar-svg-box-size: 13px;
 
   border-right: 0;
-  background-color: theme("colors.primary.100");
+  background-color: theme("colors.primary.400");
   color: theme("colors.grayscale.extra-light-gray");
 
   * {
