@@ -21,13 +21,14 @@ model User {
 }
 
 model Book {
-  id              String    @id @default(cuid())
-  isbn            String    @default("")
-  title           String    @default("")
-  description     String    @default("")
-  quantity        String    @default("")
-  language        String    @default("")
-  publisher       String    @default("")
-  pageNumbers     String    @default("")
-  publicationDate DateTime? @default(now())
+  id              String @id @default(cuid())
+  isbn            String @default("")
+  quantity        String @default("")
+  title           String @default("")
+  author          String @default("")
+  language        String @default("")
+  description     String @default("")
+  publisher       String @default("")
+  pageNumbers     String @default("")
+  publicationDate String @default("")
 }

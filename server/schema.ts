@@ -7,6 +7,7 @@
 
 import { list } from '@keystone-6/core';
 import { allowAll } from '@keystone-6/core/access';
+import { useRouter } from 'next/router';
 
 // see https://keystonejs.com/docs/fields/overview for the full list of fields
 //   this is a few common fields for an example
@@ -16,6 +17,7 @@ import {
   password,
   timestamp,
   select,
+  calendarDay,
 } from '@keystone-6/core/fields';
 
 import {useState, useMemo} from 'react';
@@ -27,19 +29,28 @@ import { document } from '@keystone-6/fields-document';
 // when using Typescript, you can refine your types to a stricter subset by importing
 // the generated types from '.keystone/types'
 import type { Lists } from '.keystone/types';
-import { info, isbn } from './book-form';
 
-// const [book, setBook] = useState(undefined);
-const getBook = async (isbnInput: any) => {
-  const res = await fetch(
-    "https://openlibrary.org/isbn/" + `${isbnInput}` + ".json"
-  );
-  const answer = await res.json();
-  // setBook(answer)
-  // console.log(answer)
-  return answer
+// const getBook = async (isbnInput: any) => {
+//   const res = await fetch(
+//     "https://openlibrary.org/isbn/" + `${isbnInput}` + ".json"
+//   );
+//   const answer = await res.json();
+//   // setBook(answer)
+//   // console.log(answer)
+//   return answer
+// };
+
+
+const headers = {
+  "Content-Type": "application/json",
+  Authorization: "48477_940f8a547364d0d1f282810594ae2f53"
 };
-
+const getBook = async (isbnInput) => {
+ const res = await fetch(`https://api2.isbndb.com/book/` + `${isbnInput}`, { headers: headers })
+ const answer = await res.json()
+ return answer.book
+    
+};
 
 export const lists: Lists = 
 {
@@ -167,31 +178,102 @@ export const lists: Lists =
     fields: {
       isbn: text({
         hooks: {
-          resolveInput({ resolvedData, inputData }) {
-            console.log(resolvedData.isbn)
-            return resolvedData.isbn;
+         resolveInput ({resolvedData, inputData}) {
+          return resolvedData.isbn
+         }, 
+         validateInput: async({resolvedData, addValidationError, operation, inputData}) => {
+          const { isbn } = resolvedData;
+          const book = await getBook(isbn);
+          console.log(inputData.isbn)
+          if (operation === 'create') {
+          book ? isbn : addValidationError('Please enter a valid ISBN') 
           }
+  
+         }
         }
+      }),
+      quantity: text({
+        validation: {isRequired: true}
       }),
       title: text({
         hooks: {
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book ? book.title : inputData)
+            return (book ? book.title : inputData.title)
             else if (operation === 'update')
             return (resolvedData.title)
+          },
+        }
+      }),
+      author: text({
+        hooks: {
+          resolveInput: async({inputData, resolvedData, operation}) => {
+            const book = await getBook(resolvedData.isbn)
+            if (operation === 'create')
+            return (book.authors ? book.authors[0] : inputData.author)
+            else if (operation === 'update')
+            return (resolvedData.author)
+          },
+        }
+      }),
+      language: text({
+        hooks: {
+          resolveInput: async({inputData, resolvedData, operation}) => {
+            const book = await getBook(resolvedData.isbn)
+            if (operation === 'create')
+            return (book ? book.language.toUpperCase() : inputData)
+            else if (operation === 'update')
+            return (resolvedData.language)
+          },
+        }
+      }),
+      description: text({
+        hooks: {
+          resolveInput: async({inputData, resolvedData, operation}) => {
+            const book = await getBook(resolvedData.isbn)
+            if (operation === 'create')
+            return (book ? book.synopsys : inputData)
+            else if (operation === 'update')
+            return (resolvedData.description)
+          },
+        }
+      }),
+      publisher: text({
+        hooks: {
+          resolveInput: async({inputData, resolvedData, operation}) => {
+            const book = await getBook(resolvedData.isbn)
+            if (operation === 'create')
+            return (book ? book.publisher : inputData)
+            else if (operation === 'update')
+            return (resolvedData.publisher)
+          },
+        }
+      }),
+      pageNumbers: text({
+        hooks: {
+          resolveInput: async({inputData, resolvedData, operation}) => {
+            const book = await getBook(resolvedData.isbn)
+            if (operation === 'create')
+            return (book ? book.pages.toString() : inputData)
+            else if (operation === 'update')
+            return (resolvedData.pageNumbers)
+          },
+        }
+      }),
+      publicationDate: text({ 
+        hooks: {
+          resolveInput: async({inputData, resolvedData, operation}) => {
+            const book = await getBook(resolvedData.isbn)
+            if (operation === 'create')
+            return (book ? book.date_published : inputData)
+            else if (operation === 'update')
+            return (resolvedData.publicationDate)
             else
             return (inputData)
           },
         }
-      }),
-      description: text(),
-      quantity: text({validation: {isRequired: true}}),
-      language: text({validation: {isRequired: true}}),
-      publisher: text(),
-      pageNumbers: text({}),
-      publicationDate: timestamp({ defaultValue: {kind: 'now'}})
-    }
+      })
+    },
   })
 };

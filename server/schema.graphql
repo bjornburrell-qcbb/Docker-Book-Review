@@ -114,13 +114,14 @@ input UserCreateInput {
 type Book {
   id: ID!
   isbn: String
-  title: String
-  description: String
   quantity: String
+  title: String
+  author: String
   language: String
+  description: String
   publisher: String
   pageNumbers: String
-  publicationDate: DateTime
+  publicationDate: String
 }
 
 input BookWhereUniqueInput {
@@ -133,22 +134,24 @@ input BookWhereInput {
   NOT: [BookWhereInput!]
   id: IDFilter
   isbn: StringFilter
-  title: StringFilter
-  description: StringFilter
   quantity: StringFilter
+  title: StringFilter
+  author: StringFilter
   language: StringFilter
+  description: StringFilter
   publisher: StringFilter
   pageNumbers: StringFilter
-  publicationDate: DateTimeNullableFilter
+  publicationDate: StringFilter
 }
 
 input BookOrderByInput {
   id: OrderDirection
   isbn: OrderDirection
-  title: OrderDirection
-  description: OrderDirection
   quantity: OrderDirection
+  title: OrderDirection
+  author: OrderDirection
   language: OrderDirection
+  description: OrderDirection
   publisher: OrderDirection
   pageNumbers: OrderDirection
   publicationDate: OrderDirection
@@ -156,13 +159,14 @@ input BookOrderByInput {
 
 input BookUpdateInput {
   isbn: String
-  title: String
-  description: String
   quantity: String
+  title: String
+  author: String
   language: String
+  description: String
   publisher: String
   pageNumbers: String
-  publicationDate: DateTime
+  publicationDate: String
 }
 
 input BookUpdateArgs {
@@ -172,13 +176,14 @@ input BookUpdateArgs {
 
 input BookCreateInput {
   isbn: String
-  title: String
-  description: String
   quantity: String
+  title: String
+  author: String
   language: String
+  description: String
   publisher: String
   pageNumbers: String
-  publicationDate: DateTime
+  publicationDate: String
 }
 
 """

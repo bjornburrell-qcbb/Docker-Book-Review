@@ -28,12 +28,14 @@ var import_core2 = require("@keystone-6/core");
 var import_core = require("@keystone-6/core");
 var import_access = require("@keystone-6/core/access");
 var import_fields = require("@keystone-6/core/fields");
+var headers = {
+  "Content-Type": "application/json",
+  Authorization: "48477_940f8a547364d0d1f282810594ae2f53"
+};
 var getBook = async (isbnInput) => {
-  const res = await fetch(
-    `https://openlibrary.org/isbn/${isbnInput}.json`
-  );
+  const res = await fetch(`https://api2.isbndb.com/book/${isbnInput}`, { headers });
   const answer = await res.json();
-  return answer;
+  return answer.book;
 };
 var lists = {
   User: (0, import_core.list)({
@@ -56,30 +58,100 @@ var lists = {
       isbn: (0, import_fields.text)({
         hooks: {
           resolveInput({ resolvedData, inputData }) {
-            console.log(resolvedData.isbn);
             return resolvedData.isbn;
+          },
+          validateInput: async ({ resolvedData, addValidationError, operation, inputData }) => {
+            const { isbn } = resolvedData;
+            const book = await getBook(isbn);
+            console.log(inputData.isbn);
+            if (operation === "create") {
+              book ? isbn : addValidationError("Please enter a valid ISBN");
+            }
           }
         }
+      }),
+      quantity: (0, import_fields.text)({
+        validation: { isRequired: true }
       }),
       title: (0, import_fields.text)({
         hooks: {
           resolveInput: async ({ inputData, resolvedData, operation }) => {
             const book = await getBook(resolvedData.isbn);
             if (operation === "create")
-              return book ? book.title : inputData;
+              return book ? book.title : inputData.title;
             else if (operation === "update")
               return resolvedData.title;
+          }
+        }
+      }),
+      author: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book.authors ? book.authors[0] : inputData.author;
+            else if (operation === "update")
+              return resolvedData.author;
+          }
+        }
+      }),
+      language: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book ? book.language.toUpperCase() : inputData;
+            else if (operation === "update")
+              return resolvedData.language;
+          }
+        }
+      }),
+      description: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book ? book.synopsys : inputData;
+            else if (operation === "update")
+              return resolvedData.description;
+          }
+        }
+      }),
+      publisher: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book ? book.publisher : inputData;
+            else if (operation === "update")
+              return resolvedData.publisher;
+          }
+        }
+      }),
+      pageNumbers: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book ? book.pages.toString() : inputData;
+            else if (operation === "update")
+              return resolvedData.pageNumbers;
+          }
+        }
+      }),
+      publicationDate: (0, import_fields.text)({
+        hooks: {
+          resolveInput: async ({ inputData, resolvedData, operation }) => {
+            const book = await getBook(resolvedData.isbn);
+            if (operation === "create")
+              return book ? book.date_published : inputData;
+            else if (operation === "update")
+              return resolvedData.publicationDate;
             else
               return inputData;
           }
         }
-      }),
-      description: (0, import_fields.text)(),
-      quantity: (0, import_fields.text)({ validation: { isRequired: true } }),
-      language: (0, import_fields.text)({ validation: { isRequired: true } }),
-      publisher: (0, import_fields.text)(),
-      pageNumbers: (0, import_fields.text)({}),
-      publicationDate: (0, import_fields.timestamp)({ defaultValue: { kind: "now" } })
+      })
     }
   })
 };
@@ -95,7 +167,6 @@ if (!sessionSecret && true) {
 var { withAuth } = (0, import_auth.createAuth)({
   listKey: "User",
   identityField: "email",
-  sessionData: "name createdAt",
   secretField: "password",
   initFirstItem: false ? void 0 : {
     fields: ["name", "email", "password"]
