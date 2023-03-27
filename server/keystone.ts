@@ -26,5 +26,20 @@ export default withAuth(
     },
     lists,
     session,
+    server: {
+      cors:{origin: ['http://localhost:3001'], credentials: true},
+      port: 3000,
+    },
+    storage: {
+      my_local_images: {
+        kind: 'local',
+        type: 'image',
+        generateUrl: path => `http://localhost:3000/images${path}`,
+        serverRoute: {
+          path: '/images',
+        },
+        storagePath: 'public/images',
+      },
+    }
   })
 );

@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { gql } from "@apollo/client";
-import BookView from "../../../components/Book/BookView";
+import BookView from "../../components/Book/BookView";
 
-import { apolloClient } from "../../../lib/apolloClient";
+import { apolloClient } from "../../lib/apolloClient";
 
 
 
@@ -14,7 +14,7 @@ export async function getStaticProps() {
             id
             title
             isbn
-            pageNumbers
+            author
             quantity
           }
         }

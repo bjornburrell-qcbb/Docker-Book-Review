@@ -40,6 +40,11 @@ function BookTable({ books }: any) {
       key: "title",
     },
     {
+      title: "Author",
+      dataIndex: "author",
+      key: "author",
+    },
+    {
       title: "ISBN",
       dataIndex: "isbn",
       key: "isbn",

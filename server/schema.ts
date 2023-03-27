@@ -9,6 +9,7 @@ import { list } from '@keystone-6/core';
 import { allowAll } from '@keystone-6/core/access';
 import { useRouter } from 'next/router';
 
+
 // see https://keystonejs.com/docs/fields/overview for the full list of fields
 //   this is a few common fields for an example
 import {
@@ -18,6 +19,9 @@ import {
   timestamp,
   select,
   calendarDay,
+  image,
+  integer,
+  multiselect,
 } from '@keystone-6/core/fields';
 
 import {useState, useMemo} from 'react';
@@ -29,6 +33,7 @@ import { document } from '@keystone-6/fields-document';
 // when using Typescript, you can refine your types to a stricter subset by importing
 // the generated types from '.keystone/types'
 import type { Lists } from '.keystone/types';
+import { states, genres } from './utils/constants';
 
 // const getBook = async (isbnInput: any) => {
 //   const res = await fetch(
@@ -43,7 +48,7 @@ import type { Lists } from '.keystone/types';
 
 const headers = {
   "Content-Type": "application/json",
-  Authorization: "48477_940f8a547364d0d1f282810594ae2f53"
+  Authorization: "48477_38b4915e1c2a46e50d96e2b46e17e5ef"
 };
 const getBook = async (isbnInput) => {
  const res = await fetch(`https://api2.isbndb.com/book/` + `${isbnInput}`, { headers: headers })
@@ -52,9 +57,12 @@ const getBook = async (isbnInput) => {
     
 };
 
+//Customer Schemna
+//Name, Shipping Address, City, State, Zipcode, Credits, Email, Password
+
 export const lists: Lists = 
 {
-  User: list({
+  Admin: list({
     // WARNING
     //   for this starter project, anyone can create, query, update and delete anything
     //   if you want to prevent random people on the internet from accessing your data,
@@ -86,7 +94,39 @@ export const lists: Lists =
       }),
     },
   }),
+  User: list({
 
+    access: allowAll,
+
+
+    fields: {
+
+      name: text({ validation: { isRequired: true } }),
+
+      email: text({
+        validation: { isRequired: true },
+
+        isIndexed: 'unique',
+      }),
+      password: password({ validation: { isRequired: true } }),
+      shippingAddress: text({validation: { isRequired: true}}),
+      aptRoomNum: text(),
+      city: text({validation: {isRequired: true}}),
+      state: select({
+        type: 'string', 
+        options: states,
+        validation: {isRequired: true}
+    }),
+      zipcode: text({validation: {isRequired: true}}),
+      credits: integer({validation:{isRequired: true}}),
+
+
+
+      createdAt: timestamp({
+        defaultValue: { kind: 'now' },
+      }),
+    },
+  }),
   // Post: list({
   //   // WARNING
   //   //   for this starter project, anyone can create, query, update and delete anything
@@ -173,6 +213,8 @@ export const lists: Lists =
   //     posts: relationship({ ref: 'Post.tags', many: true }),
   //   },
   // }),
+
+  //Add to book schema: Genre, Reading Level
   Book: list({
     access: allowAll,
     fields: {
@@ -184,9 +226,9 @@ export const lists: Lists =
          validateInput: async({resolvedData, addValidationError, operation, inputData}) => {
           const { isbn } = resolvedData;
           const book = await getBook(isbn);
-          console.log(inputData.isbn)
+          console.log(book)
           if (operation === 'create') {
-          book ? isbn : addValidationError('Please enter a valid ISBN') 
+          isbn.toString().length == 13 ? isbn : addValidationError('Please enter a valid ISBN') 
           }
   
          }
@@ -200,7 +242,7 @@ export const lists: Lists =
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book ? book.title : inputData.title)
+            return ("title" in book ? book.title : inputData.title ? inputData.title : '')
             else if (operation === 'update')
             return (resolvedData.title)
           },
@@ -211,18 +253,22 @@ export const lists: Lists =
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book.authors ? book.authors[0] : inputData.author)
+            return ("authors" in book ? book.authors[0] : inputData.author)
             else if (operation === 'update')
             return (resolvedData.author)
           },
         }
+      }),
+      genre: multiselect({
+        type: 'string',
+        options: genres,
       }),
       language: text({
         hooks: {
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book ? book.language.toUpperCase() : inputData)
+            return ("language" in book ? book.language.toUpperCase() : inputData.language)
             else if (operation === 'update')
             return (resolvedData.language)
           },
@@ -233,7 +279,7 @@ export const lists: Lists =
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book ? book.synopsys : inputData)
+            return ("synopsis" in book ? book.synopsis : inputData.description)
             else if (operation === 'update')
             return (resolvedData.description)
           },
@@ -244,29 +290,31 @@ export const lists: Lists =
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book ? book.publisher : inputData)
+            return ("publisher" in book ? book.publisher : inputData.publisher == undefined ? '' : inputData.publisher)
             else if (operation === 'update')
+            console.log(resolvedData.publisher)
             return (resolvedData.publisher)
           },
         }
       }),
-      pageNumbers: text({
-        hooks: {
-          resolveInput: async({inputData, resolvedData, operation}) => {
-            const book = await getBook(resolvedData.isbn)
-            if (operation === 'create')
-            return (book ? book.pages.toString() : inputData)
-            else if (operation === 'update')
-            return (resolvedData.pageNumbers)
-          },
-        }
-      }),
+      // pageNumbers: text({
+      //   hooks: {
+      //     resolveInput: async({inputData, resolvedData, operation}) => {
+      //       const book = await getBook(resolvedData.isbn)
+      //       console.log(book)
+      //       if (operation === 'create')
+      //       return (book?.pages ? book.pages.toString() : inputData)
+      //       else if (operation === 'update')
+      //       return (resolvedData.pageNumbers)
+      //     },
+      //   }
+      // }),
       publicationDate: text({ 
         hooks: {
           resolveInput: async({inputData, resolvedData, operation}) => {
             const book = await getBook(resolvedData.isbn)
             if (operation === 'create')
-            return (book ? book.date_published : inputData)
+            return ("date_published" in book ? book.date_published : inputData.publicationDate)
             else if (operation === 'update')
             return (resolvedData.publicationDate)
             else

@@ -12,12 +12,26 @@ generator client {
   output   = "node_modules/.prisma/client"
 }
 
-model User {
+model Admin {
   id        String    @id @default(cuid())
   name      String    @default("")
   email     String    @unique @default("")
   password  String
   createdAt DateTime? @default(now())
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String    @default("")
+  email           String    @unique @default("")
+  password        String
+  shippingAddress String    @default("")
+  aptRoomNum      String    @default("")
+  city            String    @default("")
+  state           String
+  zipcode         String    @default("")
+  credits         Int
+  createdAt       DateTime? @default(now())
 }
 
 model Book {
@@ -26,9 +40,9 @@ model Book {
   quantity        String @default("")
   title           String @default("")
   author          String @default("")
+  genre           String @default("[]")
   language        String @default("")
   description     String @default("")
   publisher       String @default("")
-  pageNumbers     String @default("")
   publicationDate String @default("")
 }

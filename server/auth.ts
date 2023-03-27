@@ -30,7 +30,7 @@ if (!sessionSecret && process.env.NODE_ENV !== 'production') {
 
 // withAuth is a function we can use to wrap our base configuration
 const { withAuth } = createAuth({
-  listKey: 'User',
+  listKey: 'Admin',
   identityField: 'email',
 
   // this is a GraphQL query fragment for fetching what data will be attached to a context.session

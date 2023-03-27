@@ -14,7 +14,6 @@ export function Layout({ children }: LayoutProps) {
     <div className="flex flex-col w-full h-full min-h-screen">
       <Header />
       <div className="flex grow">
-        <SidebarNav />
         <div className={`${styles.contentParent}`}>
           <LayoutTitleBar />
           <main className={`${styles.mainContent}`}>{children}</main>
