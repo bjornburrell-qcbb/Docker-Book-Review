@@ -204,10 +204,10 @@ input UserCreateInput {
 type Book {
   id: ID!
   isbn: String
-  quantity: String
+  quantity: Int
   title: String
   author: String
-  genre: [String!]
+  genre: String
   language: String
   description: String
   publisher: String
@@ -224,13 +224,42 @@ input BookWhereInput {
   NOT: [BookWhereInput!]
   id: IDFilter
   isbn: StringFilter
-  quantity: StringFilter
+  quantity: IntFilter
   title: StringFilter
   author: StringFilter
+  genre: StringNullableFilter
   language: StringFilter
   description: StringFilter
   publisher: StringFilter
   publicationDate: StringFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
 }
 
 input BookOrderByInput {
@@ -239,6 +268,7 @@ input BookOrderByInput {
   quantity: OrderDirection
   title: OrderDirection
   author: OrderDirection
+  genre: OrderDirection
   language: OrderDirection
   description: OrderDirection
   publisher: OrderDirection
@@ -247,10 +277,10 @@ input BookOrderByInput {
 
 input BookUpdateInput {
   isbn: String
-  quantity: String
+  quantity: Int
   title: String
   author: String
-  genre: [String!]
+  genre: String
   language: String
   description: String
   publisher: String
@@ -264,10 +294,10 @@ input BookUpdateArgs {
 
 input BookCreateInput {
   isbn: String
-  quantity: String
+  quantity: Int
   title: String
   author: String
-  genre: [String!]
+  genre: String
   language: String
   description: String
   publisher: String

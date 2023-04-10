@@ -5,6 +5,9 @@ import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
 import 'react-toastify/dist/ReactToastify.css';
 import { Store } from '../../utils/Store';
+import { useAuth } from '../../lib/auth';
+import { Menu } from 'antd';
+import { Dropdown } from 'antd';
 
 export const Navbar = () => {
   const { state } = useContext(Store);
@@ -15,12 +18,19 @@ export const Navbar = () => {
   }, [cart.cartItems]);
 
   const [query, setQuery] = useState('');
-
+  const [genre, setGenre] = useState('');
+  const { isSignedIn, data, signOut } = useAuth();
   const router = useRouter();
   const submitHandler = (e) => {
     e.preventDefault();
     router.push(`/search?query=${query}`);
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item onClick={() => signOut()}>Sign Out</Menu.Item>
+    </Menu>
+  )
   return (
     <>
       <nav className='flex items-center flex-wrap bg-green-300 p-5'>
@@ -31,6 +41,7 @@ export const Navbar = () => {
     />
           </a>
         </Link>
+        <ToastContainer position="bottom-center" limit={1} />
         <div className='flex justify-between w-full '>
           <div className='flex'>
             <Link href='/'>
@@ -43,7 +54,7 @@ export const Navbar = () => {
                 Collection
               </a>
             </Link>
-            <Link href='/'>
+            {/* <Link href='/'>
               <a className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-blue font-bold items-center justify-center hover:bg-green-600 hover:text-black'>
                 About us
               </a>
@@ -52,7 +63,7 @@ export const Navbar = () => {
               <a className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-blue font-bold items-center justify-center hover:bg-green-600 hover:text-black'>
                 Contact us
               </a>
-            </Link>
+            </Link> */}
             
           </div>
           <div className='flex w-60'>
@@ -75,7 +86,7 @@ export const Navbar = () => {
               </button>
             </form> 
             </div>
-            <div className='flex'>
+            <div className='flex align-middle'>
           <Link href='/cart'>
           <a className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-blue font-bold items-center justify-center hover:bg-green-600 hover:text-black'>
             Cart
@@ -90,9 +101,15 @@ export const Navbar = () => {
                   )}
             </a>
             </Link>
-            <Link href="/login">
-                <a className="p-2">Login</a>
-              </Link>
+            {data?.loading ? <div>Loading...</div> : data?.user == null ? (
+                <Link href="/login">
+                  <a className="p-2">Login</a>
+                </Link>
+              ): (
+                <Dropdown overlay={menu}>
+                 <a className='p-2'>{data.user.name}</a>
+                </Dropdown>
+              ) }
           </div>
         </div>
       </nav>

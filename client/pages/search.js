@@ -6,8 +6,8 @@ import Link from "next/link";
 
 export default function SearchScreen() {
   const { query } = useRouter();
-  console.log(query.query)
-  const GET_BOOKS = gql`
+  console.log(query.genre)
+  const GET_BOOKBYTITLE = gql`
   query Books($title: String){
     books(where: {title: {startsWith: $title}}) {
       id
@@ -18,8 +18,22 @@ export default function SearchScreen() {
     }
   }
     `;
-    const {loading, error, data} = useQuery(GET_BOOKS, { variables: {title: `${query.query}`}});
+  const GET_BOOKBYGENRE = gql`
+  query Books($genre: String){
+    books(where: {genre: {contains: $genre}}) {
+      id
+      title 
+      isbn 
+      author
+      genre
+    }
+  }
+    `
+
+    const {loading, error, data} = query.genre ? useQuery(GET_BOOKBYGENRE, { variables: {genre: `${query.genre}`}}) : useQuery(GET_BOOKBYTITLE, { variables: {title: `${query.query}`}});
     const books = data?.books;
+    console.log(books);
+    console.log(error);
   const filterSearch = ({
     page,
     genre,
@@ -31,7 +45,8 @@ export default function SearchScreen() {
     if (page) query.page = page;
     if (searchQuery) query.searchQuery = searchQuery;
     if (genre) query.genre = genre;
-  
+    
+    console.log(query)
 
     router.push({
       pathname: router.pathname,
@@ -59,16 +74,16 @@ export default function SearchScreen() {
               ) : null}
             </div> */}
         <div className="p-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {books?.map((book) => (
+          {books ? 
+          books?.map((book) => (
             <div key={book.id} className='flex justify-center'>
-            <Link href={`/books/${book.id}`}>
-              <div className="p-3">
-          <BookCover key={book.id} title={book.title} author={book.author} isbn={book.isbn} />
-          {/* {book.title} */}
-          </div>
-          </Link>
-          </div>
-          ))}
+              <Link href={`/books/${book.id}`}>
+            <div className="p-3">
+              <BookCover key={book.id} title={book.title} author={book.author} isbn={book.isbn} />
+            </div>
+              </Link>
+            </div>
+          )) : <div className="flex justify-center"><h1>No Results</h1></div>}
         </div>
         {/* <ul className="flex">
           {books?.length > 0 &&

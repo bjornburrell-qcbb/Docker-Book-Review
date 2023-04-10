@@ -35,6 +35,17 @@ function reducer(state, action) {
     }
     default:
       return state;
+  case 'CART_CLEAR_ITEMS': {
+    Cookies.set(
+      'cart',
+      JSON.stringify({
+        ...state.cart,
+        cartItems: [],
+      })
+    );
+  }
+      return { ...state, cart: { ...state.cart, cartItems: [] } };
+  
   }
 }
 

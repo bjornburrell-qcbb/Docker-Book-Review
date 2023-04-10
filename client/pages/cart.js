@@ -7,6 +7,9 @@ import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
 import { Button } from 'antd';
 import dynamic from 'next/dynamic'
+import { gql, useMutation} from "@apollo/client";
+import { useAuth } from '../lib/auth';
+import Cookies from 'js-cookie'
 
 function CartScreen() {
   const router = useRouter();
@@ -24,7 +27,45 @@ function CartScreen() {
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
   };
 
+  const {isSignedIn} = useAuth();
+
+  const UPDATE_BOOK = gql`
+  mutation ($id: ID!, $quantity: Int) {
+    updateBooks(data: {
+      where:{id: $id},
+      data: {
+        quantity: $quantity
+      }
+    }) {
+      id
+      title
+      quantity
+      
+    }
+  }
+  `
+  const [mutateFunction, { loading, error}] = useMutation(UPDATE_BOOK)
+
   const checkoutNotify = () => toast(`${cartItems.reduce((a, c) => a + c.cartQuantity, 0)} Books Checked Out`)
+
+  const checkout = () => {
+
+    isSignedIn ?
+
+    cartItems.map((cartItem) => {
+      const quantityDif = cartItem.quantity - cartItem.cartQuantity
+
+      quantityDif < 0 ? toast(`${cartItem.name} Quantity needs to be less than ${cartItem.cartQuantity}`) : mutateFunction({ variables: {id: `${cartItem.id}`, quantity: quantityDif}});
+
+      dispatch({ type: 'CART_CLEAR_ITEMS' });
+
+      toast('Checkout Complete')
+    })
+
+    :
+
+    router.push('/login')
+  }
   return (
     <div className='p-3'>
       <h1 className="mb-4 text-xl">Shopping Cart</h1>
@@ -83,7 +124,7 @@ function CartScreen() {
               </li>
               <li>
                 <Button
-                  onClick={checkoutNotify}
+                  onClick={checkout}
                   className="primary-button w-full"
                 >
                   Check Out

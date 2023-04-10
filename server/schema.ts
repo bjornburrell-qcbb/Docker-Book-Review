@@ -234,7 +234,7 @@ export const lists: Lists =
          }
         }
       }),
-      quantity: text({
+      quantity: integer({
         validation: {isRequired: true}
       }),
       title: text({
@@ -259,7 +259,7 @@ export const lists: Lists =
           },
         }
       }),
-      genre: multiselect({
+      genre: select({
         type: 'string',
         options: genres,
       }),

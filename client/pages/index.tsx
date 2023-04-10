@@ -43,7 +43,7 @@ const books = data.data;
         <div className="flex justify-center text-4xl">
         Explore our collection
         </div>
-        <div className="flex justify-center text-xl">
+        <div className="flex justify-center text-xl p-2">
         There's a book for everyone
         </div>
       </div>

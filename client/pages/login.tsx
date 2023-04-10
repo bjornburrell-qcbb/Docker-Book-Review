@@ -1,9 +1,13 @@
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { signIn, useSession } from 'next-auth/react'
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Store } from '../utils/Store';
+import { toast } from 'react-toastify';
+import { getError } from '../utils/error';
+import { useAuth } from '../lib/auth';
 
 
 export default function LoginScreen() {
@@ -11,6 +15,9 @@ export default function LoginScreen() {
   const [specialID, setSpecialID] = useState();
   const router = useRouter()
   const { dispatch } = useContext(Store);
+  const [id, setID] = useState('')
+  // const [error, setError] = useState(false);
+  const { signIn, signOut, data, error } = useAuth()
   const {
     handleSubmit,
     register
@@ -30,15 +37,18 @@ export default function LoginScreen() {
         }
     }
     `;
-  const submitHandler = ({ specialID }) => {
-    console.log(specialID);
-    setSpecialID(specialID);
+  const submitHandler = ({ id }) => {
+    signIn({ id })
+    // data == null ? setError(true) : router.back()
+    if(error == false) {
+      router.back
+    } 
   };
-  const {loading, error, data} = useQuery(GET_USER, { variables: {id: `${specialID}`}});
-  console.log(data?.user)
-  const user = data?.user;
+  // const {loading, error, data} = useQuery(GET_USER, { variables: {id: `${specialID}`}});
+  // console.log(data?.user)
+  // const user = data?.user;
   // data?.user ? router.push({pathname: '/cart', query: { user: user}}) : undefined;
-
+  // console.log(data)
   
   return (
     <div className='p-3'>
@@ -47,20 +57,20 @@ export default function LoginScreen() {
         onSubmit={handleSubmit(submitHandler)}
       >
         <h1 className="mb-4 text-xl">Login</h1>
-        <div className="mb-4">
+        <div className="mb-4 py-3">
           <label>Special ID</label>
           <input
-            className="w-full"
-            id="specialID"
+            className="peer h-10 w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
+            id="id"
             autoFocus
-            {...register('specialID')}
+            {...register('id')}
           ></input>
-          {data ? (
-            <div></div>
-          ) : <div className="text-red-500 ">Please enter the correct special ID.</div>}
+          {error ? <div className="text-red-500 ">Please enter the correct special ID.</div> : (
+            <div>{}</div>
+          ) }
         </div>
         <div className="mb-4 ">
-          <button className="primary-button">Login</button>
+          <button className="primary-button border-1 rounded-sm">Login</button>
         </div>
         <div className="mb-4 ">
           Don&apos;t have an account? &nbsp;

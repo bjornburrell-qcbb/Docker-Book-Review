@@ -13,17 +13,21 @@ import store from "../redux/store";
 import { Navbar } from "../components/Navbar/Navbar";
 import { SidebarNav } from "../components/SidebarNav";
 import { StoreProvider } from "../utils/Store";
+import { AuthProvider } from "../lib/auth";
 
-function MyApp({ Component, pageProps }: AppProps) {
+
+function MyApp({ Component, pageProps: {session, ...pageProps} }: AppProps) {
   return (
     <Provider store={store}>
-      <ApolloProvider client={apolloClient}>
+      {/* <ApolloProvider client={apolloClient}> */}
+      <AuthProvider>
         <StoreProvider>
         <Navbar />
           <Component {...pageProps} />
           </StoreProvider>
+      </AuthProvider>
         <Toaster position="top-right" containerClassName="mt-14" />
-      </ApolloProvider>
+      {/* </ApolloProvider> */}
     </Provider>
   );
 }

@@ -31,7 +31,18 @@ var import_fields = require("@keystone-6/core/fields");
 
 // utils/constants.tsx
 var states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-var genres = ["Autobiography", "Biography", "Fantasy", "History", "Graphic Novel", "Science Fiction", "Children", "Mystery", "Historical Fiction", "Horror"];
+var genres = [
+  { "label": "Autobiography", "value": "Autobiography" },
+  { "label": "Biography", "value": "Biography" },
+  { "label": "Fantasy", "value": "Fantasy" },
+  { "label": "History", "value": "History" },
+  { "label": "Graphic Novel", "value": "Graphic Novel" },
+  { "label": "Science Fiction", "value": "Science Fiction" },
+  { "label": "Children", "value": "Children" },
+  { "label": "Mystery", "value": "Mystery" },
+  { "label": "Historical Fiction", "value": "Historical Fiction" },
+  { "label": "Horror", "value": "Horror" }
+];
 
 // schema.ts
 var headers = {
@@ -100,7 +111,7 @@ var lists = {
           }
         }
       }),
-      quantity: (0, import_fields.text)({
+      quantity: (0, import_fields.integer)({
         validation: { isRequired: true }
       }),
       title: (0, import_fields.text)({
@@ -125,7 +136,7 @@ var lists = {
           }
         }
       }),
-      genre: (0, import_fields.multiselect)({
+      genre: (0, import_fields.select)({
         type: "string",
         options: genres
       }),
