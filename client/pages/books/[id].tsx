@@ -32,18 +32,18 @@ const BookScreen: NextPage = () => {
 
     const addToCartHandler = () => {
         const existItem = state.cart.cartItems.find((x) => x.id === data?.book.id);
-        const cartQuantity = existItem ? existItem.cartQuantity + 1 : 1;
+        const updatedQuantity = existItem ? existItem.updatedQuantity + 1 : 1;
 
-        console.log(existItem)
-        console.log('Stock Quantity: ' + data?.book.quantity)
-        console.log('Existing Item Quantity: ' + cartQuantity)
+        // console.log(existItem)
+        // console.log('Stock Quantity: ' + data?.book.quantity)
+        // console.log('Existing Item Quantity: ' + cartQuantity)
     
-        if (data?.book.quantity < cartQuantity) {
+        if (data?.book.quantity < updatedQuantity) {
           alert('Sorry. Product is out of stock');
           return;
         }
     
-        dispatch({ type: 'CART_ADD_ITEM', payload: { ...data?.book, cartQuantity } });
+        dispatch({ type: 'CART_ADD_ITEM', payload: { ...data?.book, updatedQuantity } });
         Router.push('/cart')
       };
 

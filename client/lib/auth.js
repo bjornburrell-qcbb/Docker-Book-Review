@@ -7,6 +7,7 @@ import {
   HttpLink,
   gql,
 } from '@apollo/client'
+import { toast } from 'react-toastify'
 
 const authContext = createContext()
 
@@ -65,7 +66,7 @@ function useProvideAuth() {
 
 
     console.log(result)
-  result.data.user ? setData(result.data) + setError(false) : setError(true);
+  result.data.user ? setData(result.data) + setError(false) + toast.success("Logged In Successfully", { position: "top-center" }) : setError(true);
     
 
     if(result.data) {

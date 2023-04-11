@@ -5,16 +5,16 @@ import {CloseCircleOutlined} from '@ant-design/icons'
 import { ToastContainer, toast } from 'react-toastify'
 import { Store } from '../utils/Store';
 import { useRouter } from 'next/router';
-import { Button } from 'antd';
+import { Button, Select } from 'antd';
 import dynamic from 'next/dynamic'
-import { gql, useMutation} from "@apollo/client";
+import { gql, useMutation, useQuery} from "@apollo/client";
 import { useAuth } from '../lib/auth';
 import Cookies from 'js-cookie'
 
 function CartScreen() {
   const router = useRouter();
-  const data  = router.query;
-  console.log(data)
+  // const data  = router.query;
+  // console.log(data)
   const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
@@ -23,11 +23,13 @@ function CartScreen() {
     dispatch({ type: 'CART_REMOVE_ITEM', payload: item });
   };
   const updateCartHandler = (item, qty) => {
-    const quantity = Number(qty);
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+    const updatedQuantity = Number(qty);
+    console.log(item)
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, updatedQuantity } });
+    console.log(cartItems)
   };
 
-  const {isSignedIn} = useAuth();
+  const {isSignedIn, data} = useAuth();
 
   const UPDATE_BOOK = gql`
   mutation ($id: ID!, $quantity: Int) {
@@ -44,23 +46,54 @@ function CartScreen() {
     }
   }
   `
-  const [mutateFunction, { loading, error}] = useMutation(UPDATE_BOOK)
 
-  const checkoutNotify = () => toast(`${cartItems.reduce((a, c) => a + c.cartQuantity, 0)} Books Checked Out`)
+  const GET_USER = gql`
+    query ($id: ID!) {
+        user(where:{id: $id}) {
+            id
+            credits
+        }
+    }
+    `;
+    const result = isSignedIn ? useQuery(GET_USER, { variables: {id: `${data.user.id}`}}) : undefined;
+
+    const credits = isSignedIn ? result?.data?.user?.credits : undefined
+
+    const cartCredit = cartItems.reduce((a, c) => a + c.updatedQuantity, 0)
+
+
+  const UPDATE_USER = gql`
+  mutation ($id: ID!, $credits: Int) {
+    updateUsers(data: {
+      where:{id: $id},
+      data: {
+        credits: $credits
+      }
+    }) {
+      id
+      credits
+      
+    }
+  }
+  `
+  const [mutateFunction, { loading, error}] = useMutation(UPDATE_BOOK)
+  const [updateUser] = useMutation(UPDATE_USER)
+
+  const checkoutNotify = () => toast(`${cartItems.reduce((a, c) => a + c.updatedQuantity, 0)} Books Checked Out`)
 
   const checkout = () => {
 
     isSignedIn ?
 
     cartItems.map((cartItem) => {
-      const quantityDif = cartItem.quantity - cartItem.cartQuantity
+      const quantityDif = cartItem.quantity - cartItem.updatedQuantity
 
-      quantityDif < 0 ? toast(`${cartItem.name} Quantity needs to be less than ${cartItem.cartQuantity}`) : mutateFunction({ variables: {id: `${cartItem.id}`, quantity: quantityDif}});
+      quantityDif < 0 ? toast.error(`${cartItem.name} Quantity needs to be less than ${cartItem.updatedQuantity}`, {position: "top-center"}) : mutateFunction({ variables: {id: `${cartItem.id}`, quantity: quantityDif}});
 
       dispatch({ type: 'CART_CLEAR_ITEMS' });
 
-      toast('Checkout Complete')
-    })
+    }) +
+    console.log(credits) + (credits - cartCredit) < 0 ? toast.error('Not Enough Credits', {position: "top-center"}) : updateUser({ variables: {id: `${data.user.id}`, credits: (credits - cartCredit)}}) + toast.success('Checkout Complete', {position: "top-center"})
 
     :
 
@@ -103,8 +136,33 @@ function CartScreen() {
                         </a>
                       </Link>
                     </td>
-                    <td className="p-5 text-right">{item.cartQuantity}</td>
-                    <td className="p-5 text-right">{item.cartQuantity} {"Credit(s)"}</td>
+                    {/* <td className="p-5 text-right">{item.cartQuantity}</td> */}
+                    <td className="p-5 text-right">
+                      {/* <select
+                        value={item.updatedQuantity}
+                        onChange={(e) =>
+                          updateCartHandler(item, e.target.value)
+                        }
+                      >
+                        {[...Array(item.quantity).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </select> */}
+                      <Select 
+                        defaultValue={item.updatedQuantity}
+                        onChange={(value) => updateCartHandler(item, value)}
+                      >
+                        {[...Array(item.quantity).keys()].map((x) => (
+                          // eslint-disable-next-line react/jsx-no-undef
+                          <Option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </Option>
+                        ))}
+                      </Select>
+                    </td>
+                    <td className="p-5 text-right">{item.updatedQuantity} {"Credit(s)"}</td>
                     <td className="p-5 text-center">
                       <Button type='primary' onClick={() => removeItemHandler(item)}>
                       {/* <CloseCircleOutlined className="h-5 w-5"/> */} X
@@ -119,7 +177,7 @@ function CartScreen() {
             <ul>
               <li>
                 <div className="pb-3 text-xl">
-                  Subtotal ({cartItems.reduce((a, c) => a + c.cartQuantity, 0)}) : {cartItems.reduce((a, c) => a + c.cartQuantity, 0)} Credit
+                  Subtotal ({cartItems.reduce((a, c) => a + c.updatedQuantity, 0)}) : {cartItems.reduce((a, c) => a + c.updatedQuantity, 0)} Credit
                 </div>
               </li>
               <li>

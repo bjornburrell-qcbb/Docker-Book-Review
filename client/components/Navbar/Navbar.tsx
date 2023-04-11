@@ -14,7 +14,7 @@ export const Navbar = () => {
   const { cart } = state;
   const [cartItemsCount, setCartItemsCount] = useState(0);
   useEffect(() => {
-    setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.cartQuantity, 0));
+    setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.updatedQuantity, 0));
   }, [cart.cartItems]);
 
   const [query, setQuery] = useState('');
@@ -106,9 +106,9 @@ export const Navbar = () => {
                   <a className="p-2">Login</a>
                 </Link>
               ): (
-                <Dropdown overlay={menu}>
-                 <a className='p-2'>{data.user.name}</a>
-                </Dropdown>
+                // <Dropdown overlay={menu}>
+                 <a className='p-2'>{data.user.name} | {data.user.credits} Credits</a>
+                // </Dropdown>
               ) }
           </div>
         </div>

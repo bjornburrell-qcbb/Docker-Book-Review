@@ -8,6 +8,7 @@ import { Store } from '../utils/Store';
 import { toast } from 'react-toastify';
 import { getError } from '../utils/error';
 import { useAuth } from '../lib/auth';
+import { Button } from 'antd';
 
 
 export default function LoginScreen() {
@@ -40,8 +41,9 @@ export default function LoginScreen() {
   const submitHandler = ({ id }) => {
     signIn({ id })
     // data == null ? setError(true) : router.back()
-    if(error == false) {
-      router.back
+    if(data) {
+      toast.success("Logged In Successfully", {position: "top-center"})
+      router.back()
     } 
   };
   // const {loading, error, data} = useQuery(GET_USER, { variables: {id: `${specialID}`}});
@@ -70,7 +72,7 @@ export default function LoginScreen() {
           ) }
         </div>
         <div className="mb-4 ">
-          <button className="primary-button border-1 rounded-sm">Login</button>
+          <Button type={'primary'} htmlType='submit' className="primary-button border-1 rounded-sm">Login</Button>
         </div>
         <div className="mb-4 ">
           Don&apos;t have an account? &nbsp;
