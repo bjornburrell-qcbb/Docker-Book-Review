@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { ApolloProvider, gql, useQuery } from "@apollo/client";
 import { Button, Divider, Input } from "antd";
 import type { NextPage } from "next";
 import Link from "next/link";
@@ -63,7 +63,7 @@ const books = data.data;
           Available Books
         </div>
         <Divider />
-        <div className="flex justify-center flex-row">
+        <div className="flex justify-center flex-row flex-wrap">
           {books.map((book) => {
             // eslint-disable-next-line react/jsx-key
             return (
